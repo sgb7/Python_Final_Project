@@ -6,6 +6,22 @@ import sys
 import os
 from pygame import mixer
 
+'''class Player(pygame.sprite.Sprite):
+    def  __init__(self, x, y):
+        pygame.sprite.Sprite.__init__(self)
+        self.xPos = 0
+        self.yPos =  0
+        self.image = pygame.image.load('Images/PlayerRight3.png')
+        self.image = pygame.transform.scale(self.image, (40, 40))
+        self.rect = pygame.Rect(self.x, self.y, 40, 40)
+
+    def movement(self, x, y):
+        self.xPos += x
+        self.yPos += y
+
+    def update(self, x, y):
+        screen.blit(self, (x, y))'''
+
 pygame.init()
 
 screen = pygame.display.set_mode((800, 600))
@@ -45,7 +61,8 @@ pygame.display.set_icon(icon)
 # Start with points and killable ghosts, then add fruit if there's time.
 
 score_value = 0
-#font = pygame.font.Font('freesanbold.ttf', 32)
+#font = pygame.font.SysFont('comicsansms', 32)
+#This works, but the game takes longer to start up
 
 # Game over
 #over_font = pygame.font.Font('freesanbold.ttf', 64)
@@ -76,28 +93,6 @@ while running:
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             running = False
-
-        '''if event.type == pygame.KEYDOWN:
-            if event.key == pygame.K_LEFT:
-                playerPosX -= steps
-                #Player moves left
-                #Shifts to left animation
-            if event.key == pygame.K_RIGHT:
-                playerPosX += steps
-                #Player moves right
-                #Shifts to right animation
-            if event.key == pygame.K_UP:
-                playerPosY -= steps
-                #Player moves up
-                #Animation rotates so its facing up
-            if event.key == pygame.K_DOWN:
-                playerPosY += steps
-                #Player moves down
-                #Animation rotates so its facing down
-
-        if event.type == pygame.KEYUP:
-            if event.key == pygame.K_LEFT or event.key == pygame.K_RIGHT:
-                playerPosX = playerPosX'''
 
     keys = pygame.key.get_pressed()
     
