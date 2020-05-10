@@ -6,47 +6,19 @@ import sys
 import os
 from pygame import mixer
 
-# OBJECTS:
-class Player(pygame.sprite.Sprite):
-    def __init__(self):
-        pygame.sprite.Sprite.__init__(self)
-
-        self.moveX = 0
-        self.moveY = 0
-        self.frame = 0
-        self.images = []
-
-        for i in range(1, 4):
-            img = pygame.image.load(os.path.join('Images', 'PlayerRight' + str(i) + '.png')).convert()
-            #img.convert_alpha()
-            #img.set_colorkey(ALPHA)
-            self.images.append(img)
-            self.image = self.images[0]
-            self.rect = self.image.get_rect()
-
-    def movement(self, x, y):
-        self.moveX += x
-        self.moveY += y
-
-    def update(self):
-        self.rect.x = self.rect.x + self.moveX
-        self.rect.y = self.rect.y + self.moveY
-
-        if self.moveX < 0:
-            self.frame += 1
-            if self.frame > 3*ani:
-                self.frame = 0
-            self.image = self.images[self.frame//ani]
-
-        if self.moveX > 0:
-            self.frame += 1
-            if self.frame > 3*ani:
-                self.frame = 0
-            self.image = self.images[(self.frame//ani)+4]
-
 pygame.init()
 
 screen = pygame.display.set_mode((800, 600))
+
+#playerImgRight = pygame.image.load('Images/PlayerRight3.png')
+#playerImgLeft = pygame.image.load('Images/PlayerLeft3.png')
+playerImg = pygame.image.load('Images/PlayerRight3.png')
+playerImg = pygame.transform.scale(playerImg, (40, 40))
+playerPosX = 100
+playerPosY = 100
+steps = 5
+# Idea: create an array of player images, and a variable "playerImg", which changes for
+# the situation. Images are selected from the array.
 
 # Going to need to  upload a background image to use
 # Also, I'll probably need to make the 'barriers' that make up the maze seperately.
@@ -79,20 +51,15 @@ def game_over_text():
     over_text = over_font.render("GAME OVER", True, (255, 255, 255))
     screen.blit(over_text, (200, 250))
 
+def player(x, y):
+    screen.blit(playerImg, (x, y))
+
+#def image_switch(img, x, y):
+
+
 # Need a defintion for collisions between ghosts and pacman.
 # Also maybe one for pacman and points/fruit?
 # Characters and walls?
-
-fps = 40
-ani = 4
-clock = pygame.time.Clock()
-
-player = Player()
-player.rect.x = 0
-player.rect.y = 0
-playerGroup =  pygame.sprite.Group()
-playerGroup.add(player)
-steps = 10 #How fast to move
 
 
 # Okay, game loop time!
@@ -106,38 +73,49 @@ while running:
         if event.type == pygame.QUIT:
             running = False
 
-        if event.type == pygame.KEYDOWN:
+        '''if event.type == pygame.KEYDOWN:
             if event.key == pygame.K_LEFT:
-                player.movement(-steps,  0)
+                playerPosX -= steps
                 #Player moves left
                 #Shifts to left animation
             if event.key == pygame.K_RIGHT:
-                player.movement(steps,  0)
+                playerPosX += steps
                 #Player moves right
                 #Shifts to right animation
             if event.key == pygame.K_UP:
-                player.movement(0, steps)
+                playerPosY -= steps
                 #Player moves up
                 #Animation rotates so its facing up
             if event.key == pygame.K_DOWN:
-                player.movement(0,  -steps)
+                playerPosY += steps
                 #Player moves down
                 #Animation rotates so its facing down
 
         if event.type == pygame.KEYUP:
-            if event.key == pygame.K_Left:
-                player.movement(steps, 0)
-            if event.key == pygame.K_RIGHT:
-                player.movement(-steps, 0)
-            if event.key == pygame.K_UP:
-                player.movement(0, -steps)
-            if event.key == pygame.K_DOWN:
-                player.movement(0, steps)
-                #Player doesn't move
-                #Animation remains what it was OR switchs to forward?
+            if event.key == pygame.K_LEFT or event.key == pygame.K_RIGHT:
+                playerPosX = playerPosX'''
 
-    player.update()
-    playerGroup.draw(screen)
-    clock.tick(fps)
+    keys = pygame.key.get_pressed()
+    
+    if keys[pygame.K_LEFT]:
+        playerPosX -= steps
+        if playerPosX <= 0:
+            playerPosX = 0
 
+    if keys[pygame.K_RIGHT]:
+        playerPosX += steps
+        if playerPosX >= 760:
+            playerPosX = 760
+
+    if keys[pygame.K_UP]:
+        playerPosY -= steps
+        if playerPosY <= 0:
+            playerPosY = 0
+
+    if keys[pygame.K_DOWN]:
+        playerPosY += steps
+        if playerPosY >= 560:
+            playerPosY = 560
+
+    player(playerPosX, playerPosY)
     pygame.display.update()
