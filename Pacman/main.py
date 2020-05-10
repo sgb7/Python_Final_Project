@@ -10,10 +10,17 @@ pygame.init()
 
 screen = pygame.display.set_mode((800, 600))
 
-#playerImgRight = pygame.image.load('Images/PlayerRight3.png')
-#playerImgLeft = pygame.image.load('Images/PlayerLeft3.png')
-playerImg = pygame.image.load('Images/PlayerRight3.png')
+playerImgRight = pygame.image.load('Images/PlayerRight3.png')
+playerImgRight = pygame.transform.scale(playerImgRight, (40, 40))
+playerImgLeft = pygame.image.load('Images/PlayerLeft3.png')
+playerImgLeft = pygame.transform.scale(playerImgLeft,  (40, 40))
+
+playerImg = playerImgRight
 playerImg = pygame.transform.scale(playerImg, (40, 40))
+
+playerImgDown = pygame.transform.rotate(playerImg, -90)
+playerImgUp = pygame.transform.rotate(playerImg, 90)
+
 playerPosX = 100
 playerPosY = 100
 steps = 5
@@ -53,9 +60,6 @@ def game_over_text():
 
 def player(x, y):
     screen.blit(playerImg, (x, y))
-
-#def image_switch(img, x, y):
-
 
 # Need a defintion for collisions between ghosts and pacman.
 # Also maybe one for pacman and points/fruit?
@@ -98,21 +102,25 @@ while running:
     keys = pygame.key.get_pressed()
     
     if keys[pygame.K_LEFT]:
+        playerImg = playerImgLeft
         playerPosX -= steps
         if playerPosX <= 0:
             playerPosX = 0
 
     if keys[pygame.K_RIGHT]:
+        playerImg = playerImgRight
         playerPosX += steps
         if playerPosX >= 760:
             playerPosX = 760
 
     if keys[pygame.K_UP]:
+        playerImg = playerImgUp
         playerPosY -= steps
         if playerPosY <= 0:
             playerPosY = 0
 
     if keys[pygame.K_DOWN]:
+        playerImg = playerImgDown
         playerPosY += steps
         if playerPosY >= 560:
             playerPosY = 560
