@@ -6,45 +6,57 @@ import sys
 import os
 from pygame import mixer
 
-'''class Player(pygame.sprite.Sprite):
-    def  __init__(self, x, y):
-        pygame.sprite.Sprite.__init__(self)
-        self.xPos = 0
-        self.yPos =  0
+class Player(pygame.sprite.Sprite):
+    def __init__(self, xPos, yPos):
         self.image = pygame.image.load('Images/PlayerRight3.png')
         self.image = pygame.transform.scale(self.image, (40, 40))
+        self.x = xPos
+        self.y = yPos
         self.rect = pygame.Rect(self.x, self.y, 40, 40)
 
-    def movement(self, x, y):
-        self.xPos += x
-        self.yPos += y
+    def image_switch(self, direction):
+        playerLeft = pygame.image.load('Images/PlayerLeft3.png')
+        playerLeft = pygame.transform.scale(playerLeft, (40, 40))
+        playerRight = pygame.image.load('Images/PlayerRight3.png')
+        playerRight = pygame.transform.scale(playerRight, (40, 40))
+        playerDown = pygame.transform.rotate(self.image, -90)
+        playerUp = pygame.transform.rotate(self.image, 90)
+
+        if direction == "left":
+            self.image = playerLeft
+        elif direction == "right":
+            self.image = playerRight
+        elif direction == "up":
+            self.image == playerUp
+        elif direction == "down":
+            self.image == playerDown
+        else:
+            self.image = self.image
 
     def update(self, x, y):
-        screen.blit(self, (x, y))'''
+        screen.blit(self.image, (x, y))
+
+class Walls(pygame.sprite.Sprite):
+    def __init__(self):
+        pygame.sprite.Sprite.__init__(self)
+
+class Enemies(pygame.sprite.Sprite):
+    def __init__(self):
+        pygame.sprite.Sprite.__init__(self)
+
+
 
 pygame.init()
 
 screen = pygame.display.set_mode((800, 600))
 
-playerImgRight = pygame.image.load('Images/PlayerRight3.png')
-playerImgRight = pygame.transform.scale(playerImgRight, (40, 40))
-playerImgLeft = pygame.image.load('Images/PlayerLeft3.png')
-playerImgLeft = pygame.transform.scale(playerImgLeft,  (40, 40))
-
-playerImg = playerImgRight
-playerImg = pygame.transform.scale(playerImg, (40, 40))
-# Idea: create an array of player images, and a variable "playerImg", which changes for
-# the situation. Images are selected from the array.
-
-playerImgDown = pygame.transform.rotate(playerImg, -90)
-playerImgUp = pygame.transform.rotate(playerImg, 90)
-
 playerPosX = 100
 playerPosY = 100
+player = Player(playerPosX, playerPosY)
 steps = 5
 
-#Walls = [pygame.image.load('Images/StraightWallV.png'), pygame.image.load('Images/StraightWallH.png'), pygame.image.load('Images/WallCornerUL.png')
- #       pygame.image.load('Images/WallCornerUR.png'), pygame.image.load('Images/WallCornerLL.png'), pygame.image.load('Images/WallCornerLR.png')]
+'''WallVS = pygame.image.load('Images/StraightWallV.png')
+WallVS = pygame.transform.scale(WallVS, (100, 100))'''
 
 '''WallVS = pygame.image.load('Images/StraightWallV.png')
 WallHS = pygame.transform.rotate(WallVS, 90)
@@ -86,12 +98,12 @@ def game_over_text():
     over_text = over_font.render("GAME OVER", True, (255, 255, 255))
     screen.blit(over_text, (200, 250))
 
-def player(x, y):
-    screen.blit(playerImg, (x, y))
-
 # Need a defintion for collisions between ghosts and pacman.
 # Also maybe one for pacman and points/fruit?
 # Characters and walls?
+
+# Note for enemy programming: enemy just needs to target player (and not try and go through walls to do it; do a 180 towards player
+# each time a wall is collided with?)
 
 
 # Okay, game loop time!
@@ -108,29 +120,30 @@ while running:
     keys = pygame.key.get_pressed()
     
     if keys[pygame.K_LEFT]:
-        playerImg = playerImgLeft
+        player.image_switch("left")
         playerPosX -= steps
         if playerPosX <= 0:
             playerPosX = 0
 
     if keys[pygame.K_RIGHT]:
-        playerImg = playerImgRight
+        player.image_switch("right")
         playerPosX += steps
         if playerPosX >= 760:
             playerPosX = 760
 
     if keys[pygame.K_UP]:
-        playerImg = playerImgUp
+        player.image_switch("up")
         playerPosY -= steps
         if playerPosY <= 0:
             playerPosY = 0
 
     if keys[pygame.K_DOWN]:
-        playerImg = playerImgDown
+        player.image_switch("down")
         playerPosY += steps
         if playerPosY >= 560:
             playerPosY = 560
 
-    #screen.blit(Walls[0], (100, 50))
-    player(playerPosX, playerPosY)
+    #screen.blit(WallVS, (-15, 0))
+    #player(playerPosX, playerPosY)
+    player.update(playerPosX, playerPosY)
     pygame.display.update()
