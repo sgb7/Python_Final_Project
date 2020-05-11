@@ -33,6 +33,8 @@ playerImgLeft = pygame.transform.scale(playerImgLeft,  (40, 40))
 
 playerImg = playerImgRight
 playerImg = pygame.transform.scale(playerImg, (40, 40))
+# Idea: create an array of player images, and a variable "playerImg", which changes for
+# the situation. Images are selected from the array.
 
 playerImgDown = pygame.transform.rotate(playerImg, -90)
 playerImgUp = pygame.transform.rotate(playerImg, 90)
@@ -40,8 +42,17 @@ playerImgUp = pygame.transform.rotate(playerImg, 90)
 playerPosX = 100
 playerPosY = 100
 steps = 5
-# Idea: create an array of player images, and a variable "playerImg", which changes for
-# the situation. Images are selected from the array.
+
+#Walls = [pygame.image.load('Images/StraightWallV.png'), pygame.image.load('Images/StraightWallH.png'), pygame.image.load('Images/WallCornerUL.png')
+ #       pygame.image.load('Images/WallCornerUR.png'), pygame.image.load('Images/WallCornerLL.png'), pygame.image.load('Images/WallCornerLR.png')]
+
+'''WallVS = pygame.image.load('Images/StraightWallV.png')
+WallHS = pygame.transform.rotate(WallVS, 90)
+WallCornerUL = pygame.image.load('Images/WallCornerUL.png')
+WallCornerUR = pygame.image.load('Images/WallCornerUR.png')
+WallCornerLL = pygame.image.load('Images/WallCornerLL.png')
+WallCornerLR = pygame.image.load('Images/WallCornerLR.png')'''
+
 
 # Going to need to  upload a background image to use
 # Also, I'll probably need to make the 'barriers' that make up the maze seperately.
@@ -120,5 +131,6 @@ while running:
         if playerPosY >= 560:
             playerPosY = 560
 
+    #screen.blit(Walls[0], (100, 50))
     player(playerPosX, playerPosY)
     pygame.display.update()
