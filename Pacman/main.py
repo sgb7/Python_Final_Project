@@ -41,30 +41,65 @@ class Walls(pygame.sprite.Sprite):
         pygame.sprite.Sprite.__init__(self)
 
 class Enemies(pygame.sprite.Sprite):
-    def __init__(self):
-        pygame.sprite.Sprite.__init__(self)
+    def __init__(self, color, xPos, yPos):
+        ghosts = ['Images/GreenGhostForward.png', 'Images/OrangeGhostForward.png', 'Images/PinkGhostForward.png', 'Images/YellowGhostForward.png']
+        if color == "green":
+            self.image = pygame.image.load(ghosts[0])
+            self.image = pygame.transform.scale(self.image, (40, 40))
+        elif color == "orange":
+            self.image = pygame.image.load(ghosts[1])
+            self.image = pygame.transform.scale(self.image, (40, 40))
+        elif color == "pink":
+            self.image = pygame.image.load(ghosts[2])
+            self.image = pygame.transform.scale(self.image, (40, 40))
+        elif color == "yellow":
+            self.image = pygame.image.load(ghosts[3])
+            self.image = pygame.transform.scale(self.image, (40, 40))
+        else:
+            self.image = pygame.image.load(ghosts[0])
+            self.image = pygame.transform.scale(self.image, (40, 40))
+
+        self.x = xPos
+        self.y = yPos
+        self.rect = pygame.Rect(self.x, self.y, 40, 40)
+
+    #def target_player(playerX, playerY):
+        # Get ghost to move towards player. How?
+
+    def update(self, x, y):
+        screen.blit(self.image, (x, y))
+
+# Need some sort of tilemap class?
+
 
 
 
 pygame.init()
 
-screen = pygame.display.set_mode((800, 600))
+screen = pygame.display.set_mode((800, 800))
 
+# Player
 playerPosX = 100
 playerPosY = 100
 player = Player(playerPosX, playerPosY)
 steps = 5
 
-'''WallVS = pygame.image.load('Images/StraightWallV.png')
-WallVS = pygame.transform.scale(WallVS, (100, 100))'''
+# Ghosts
+enemyPosX = 200
+enemyPosY = 200
+ghostG = Enemies("green", enemyPosX, enemyPosY)
+steps = 3
 
-'''WallVS = pygame.image.load('Images/StraightWallV.png')
-WallHS = pygame.transform.rotate(WallVS, 90)
-WallCornerUL = pygame.image.load('Images/WallCornerUL.png')
-WallCornerUR = pygame.image.load('Images/WallCornerUR.png')
-WallCornerLL = pygame.image.load('Images/WallCornerLL.png')
-WallCornerLR = pygame.image.load('Images/WallCornerLR.png')'''
+# Map of Walls
 
+wallMap = ["CHHHHHHC",
+           "V......V",
+           "V......V",
+           "V......V",
+           "V......V",
+           "V......V",
+           "V......V",
+           "CHHHHHHC"]
 
 # Going to need to  upload a background image to use
 # Also, I'll probably need to make the 'barriers' that make up the maze seperately.
@@ -140,10 +175,11 @@ while running:
     if keys[pygame.K_DOWN]:
         player.image_switch("down")
         playerPosY += steps
-        if playerPosY >= 560:
-            playerPosY = 560
+        if playerPosY >= 760:
+            playerPosY = 760
 
     #screen.blit(WallVS, (-15, 0))
     #player(playerPosX, playerPosY)
     player.update(playerPosX, playerPosY)
+    ghostG.update(enemyPosX, enemyPosY)
     pygame.display.update()
