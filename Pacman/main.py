@@ -8,11 +8,13 @@ from pygame import mixer
 
 class Player(pygame.sprite.Sprite):
     def __init__(self, xPos, yPos):
+        pygame.sprite.Sprite.__init__(self)
+
         self.image = pygame.image.load('Images/PlayerRight3.png')
         self.image = pygame.transform.scale(self.image, (40, 40))
         self.x = xPos
         self.y = yPos
-        self.rect = pygame.Rect(self.x, self.y, 40, 40)
+        self.rect = self.image.get_rect()
 
     def image_switch(self, direction):
         playerLeft = pygame.image.load('Images/PlayerLeft3.png')
@@ -37,11 +39,20 @@ class Player(pygame.sprite.Sprite):
         screen.blit(self.image, (x, y))
 
 class Walls(pygame.sprite.Sprite):
-    def __init__(self):
+    def __init__(self, xPos, yPos):
         pygame.sprite.Sprite.__init__(self)
+        self.image =  pygame.image.load('Images/WallD.png')
+        self.image = pygame.transform.scale(self.image, (50, 50))
+        self.x = xPos
+        self.y = yPos
+        self.rect = self.image.get_rect()
+
+    def update(self, x, y):
+        screen.blit(self.image, (x, y))
 
 class Enemies(pygame.sprite.Sprite):
     def __init__(self, color, xPos, yPos):
+        pygame.sprite.Sprite.__init__(self)
         ghosts = ['Images/GreenGhostForward.png', 'Images/OrangeGhostForward.png', 'Images/PinkGhostForward.png', 'Images/YellowGhostForward.png']
         if color == "green":
             self.image = pygame.image.load(ghosts[0])
@@ -61,7 +72,8 @@ class Enemies(pygame.sprite.Sprite):
 
         self.x = xPos
         self.y = yPos
-        self.rect = pygame.Rect(self.x, self.y, 40, 40)
+        self.rect = self.image.get_rect()
+
 
     #def target_player(playerX, playerY):
         # Get ghost to move towards player. How?
@@ -88,18 +100,36 @@ steps = 5
 enemyPosX = 200
 enemyPosY = 200
 ghostG = Enemies("green", enemyPosX, enemyPosY)
-steps = 3
+ghostO = Enemies("orange", enemyPosX, enemyPosY)
+ghostP = Enemies("pink", enemyPosX, enemyPosY)
+ghostY = Enemies("yellow", enemyPosX, enemyPosY)
+
 
 # Map of Walls
+wallSquare = pygame.image.load('Images/WallD.png')
+wallSquare = pygame.transform.scale(wallSquare, (40,40))
+# Set a rect?
+wallMap = [[1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
+           [1, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 1],
+           [1, 0, 1, 1, 0, 1, 1, 0, 1, 1, 1, 1, 0, 1, 1, 0, 1, 1, 0, 1],
+           [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
+           [1, 0, 1, 1, 1, 1, 0, 1, 1, 1, 1, 1, 1, 0, 1, 1, 1, 1, 0, 1],
+           [1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1],
+           [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
+           [1, 1, 1, 0, 1, 1, 0, 1, 1, 0, 0, 1, 1, 0, 1, 1, 0, 1, 1, 1],
+           [1, 1, 1, 0, 1, 1, 0, 1, 0, 0, 0, 0, 1, 0, 1, 1, 0, 1, 1, 1],
+           [0, 0, 0, 0, 1, 1, 0, 1, 0, 0, 0, 0, 1, 0, 1, 1, 0, 0, 0, 0],
+           [0, 0, 0, 0, 1, 1, 0, 1, 0, 0, 0, 0, 1, 0, 1, 1, 0, 0, 0, 0],
+           [1, 1, 1, 0, 1, 1, 0, 1, 0, 0, 0, 0, 1, 0, 1, 1, 0, 1, 1, 1],
+           [1, 1, 1, 0, 1, 1, 0, 1, 1, 1, 1, 1, 1, 0, 1, 1, 0, 1, 1, 1],
+           [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
+           [1, 0, 1, 0, 1, 1, 0, 1, 1, 1, 1, 1, 1, 0, 1, 1, 0, 1, 0, 1],
+           [1, 0, 1, 0, 1, 1, 0, 0, 0, 1, 1, 0, 0, 0, 1, 1, 0, 1, 0, 1],
+           [1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 1],
+           [1, 0, 1, 1, 1, 1, 0, 0, 1, 1, 1, 1, 0, 0, 1, 1, 1, 1, 0, 1],
+           [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
+           [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1]]
 
-wallMap = ["CHHHHHHC",
-           "V......V",
-           "V......V",
-           "V......V",
-           "V......V",
-           "V......V",
-           "V......V",
-           "CHHHHHHC"]
 
 # Going to need to  upload a background image to use
 # Also, I'll probably need to make the 'barriers' that make up the maze seperately.
@@ -133,6 +163,20 @@ def game_over_text():
     over_text = over_font.render("GAME OVER", True, (255, 255, 255))
     screen.blit(over_text, (200, 250))
 
+def render_level():
+    xCounter = 0
+    yCounter = 0
+    for i in range(len(wallMap)):
+        for j in range(len(wallMap[i])):
+            if wallMap[i][j] ==  1:
+                screen.blit(wallSquare, (xCounter, yCounter))
+            xCounter = xCounter + 40
+        yCounter = yCounter + 40
+        xCounter = 0
+
+
+            
+
 # Need a defintion for collisions between ghosts and pacman.
 # Also maybe one for pacman and points/fruit?
 # Characters and walls?
@@ -146,6 +190,7 @@ running = True
 while running:
 
     screen.fill((0, 0, 0))
+    render_level()
     # screen.blit(background, (0, 0))
 
     for event in pygame.event.get():
@@ -159,6 +204,8 @@ while running:
         playerPosX -= steps
         if playerPosX <= 0:
             playerPosX = 0
+        if player.rect.colliderect(ghostG):
+            playerPosX = playerPosX
 
     if keys[pygame.K_RIGHT]:
         player.image_switch("right")
@@ -178,8 +225,25 @@ while running:
         if playerPosY >= 760:
             playerPosY = 760
 
-    #screen.blit(WallVS, (-15, 0))
-    #player(playerPosX, playerPosY)
+
+    '''ghostG.update(enemyPosX, enemyPosY)
+    upOrDown = random.choice([enemyPosX, enemyPosY])
+    leftOrRight = random.choice([steps, -steps])
+    z = random.choice(range(5, 6))
+    if upOrDown == enemyPosX:
+        for i in range(0, z):
+            enemyPosX += leftOrRight
+    else:
+        for i in range(0, z):
+            enemyPosY += leftOrRight
+    if enemyPosX <= 0:
+        enemyPosX = 0
+    if enemyPosX >= 760:
+        enemyPosX = 760
+    if enemyPosY <= 0:
+        enemyPosY = 0
+    if enemyPosY >= 760:
+        enemyPosY = 760'''
+
     player.update(playerPosX, playerPosY)
-    ghostG.update(enemyPosX, enemyPosY)
     pygame.display.update()
