@@ -81,7 +81,6 @@ class Enemies(pygame.sprite.Sprite):
     def update(self, x, y):
         screen.blit(self.image, (x, y))
 
-# Need some sort of tilemap class?
 
 
 
@@ -166,6 +165,7 @@ def game_over_text():
     screen.blit(over_text, (200, 250))
 
 def render_level():
+    screen.fill((0, 0, 0))
     xCounter = 0
     yCounter = 0
     for i in range(len(wallMap)):
@@ -193,7 +193,6 @@ def render_level():
 running = True
 while running:
 
-    screen.fill((0, 0, 0))
     render_level()
     # screen.blit(background, (0, 0))
 
