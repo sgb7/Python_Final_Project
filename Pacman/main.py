@@ -9,41 +9,19 @@ from pygame import mixer
 class Player(pygame.sprite.Sprite):
     def __init__(self, xPos, yPos):
         pygame.sprite.Sprite.__init__(self)
-
         self.image = pygame.image.load('Images/PlayerRight3.png')
         self.image = pygame.transform.scale(self.image, (40, 40))
         self.x = xPos
         self.y = yPos
-        self.width = 40
-        self.height = 40
-        self.rect = pygame.Rect(self.x, self.y, self.width, self.height)
-
-    def image_switch(self, direction):
-        playerLeft = pygame.image.load('Images/PlayerLeft3.png')
-        playerLeft = pygame.transform.scale(playerLeft, (40, 40))
-        playerRight = pygame.image.load('Images/PlayerRight3.png')
-        playerRight = pygame.transform.scale(playerRight, (40, 40))
-        playerDown = pygame.transform.rotate(self.image, -90)
-        playerUp = pygame.transform.rotate(self.image, 90)
-
-        if direction == "left":
-            self.image = playerLeft
-        elif direction == "right":
-            self.image = playerRight
-        elif direction == "up":
-            self.image == playerUp
-        elif direction == "down":
-            self.image == playerDown
-        else:
-            self.image = self.image
+        self.rect = pygame.Rect(self.x, self.y, 40, 40)
+        self.mask = pygame.mask.from_surface(self.image)
 
     def update(self, x, y):
         screen.blit(self.image, (x, y))
-        self.rect = self.image.get_rect()
+        self.rect = pygame.Rect(x, y, 40, 40)
 
     def get_rect(self):
         return self.rect
-        #return pygame.Rect(self.x, self.y, self.width, self.height)
 
 
 class Walls(pygame.sprite.Sprite):
@@ -53,23 +31,32 @@ class Walls(pygame.sprite.Sprite):
         self.image = pygame.transform.scale(self.image, (40, 40))
         self.x = xPos
         self.y = yPos
-        self.width  = 40
-        self.height = 40
-        self.rect = pygame.Rect(self.x, self.y, self.width, self.height)
+        self.rect = pygame.Rect(self.x, self.y, 40, 40)
+        self.mask = pygame.mask.from_surface(self.image)
 
     def update(self, x, y):
         screen.blit(self.image, (x, y))
-        self.rect = pygame.Rect(self.x, self.y, self.width, self.height)
+        self.rect = pygame.Rect(x, y, 40, 40)
 
     def get_rect(self):
-        self.rect = pygame.Rect(self.x, self.y, self.width, self.height)
+        #self.rect = pygame.Rect(self.x, self.y, 40, 40)
         return self.rect
 
-    def get_image(self):
-        return self.image
+class Points(pygame.sprite.Sprite):
+    def  __init__(self):
+        pygame.sprite.Sprite.__init__(self)
+        self.image = pygame.image.load('Images/point.png')
+        self.image = pygame.transform.scale(self.image, (40, 40))
+        self.rect = pygame.Rect(0, 0, 40, 40)
+        self.mask = pygame.mask.from_surface(self.image)
 
-    def get_x_position(self):
-        return self.x
+    def update(self, x, y):
+        screen.blit(self.image, (x, y))
+        self.rect = pygame.Rect(x, y, 40, 40)
+
+    def get_rect(self):
+        return self.rect
+
 
 class Enemies(pygame.sprite.Sprite):
     def __init__(self, color, xPos, yPos):
@@ -93,26 +80,16 @@ class Enemies(pygame.sprite.Sprite):
 
         self.x = xPos
         self.y = yPos
-        self.width = 40
-        self.height = 40
-        self.rect = pygame.Rect(self.x, self.y, self.width, self.height)
+        self.rect = pygame.Rect(self.x, self.y, 40, 40)
+        self.mask = pygame.mask.from_surface(self.image)
 
-
-    #def target_player(playerX, playerY):
-        # Get ghost to move towards player. How?
 
     def update(self, x, y):
         screen.blit(self.image, (x, y))
+        self.rect = pygame.Rect(x, y, 40, 40)
 
     def get_rect(self):
-        self.rect = pygame.Rect(self.x - 20, self.y + 20, self.width, self.height)
         return self.rect
-
-    def get_x_position(self):
-        return self.x
-
-    def get_y_position(self):
-        return self.y
 
 
 
@@ -135,6 +112,7 @@ ghostG = Enemies("green", enemyPosX, enemyPosY)
 ghostO = Enemies("orange", enemyPosX, enemyPosY)
 ghostP = Enemies("pink", enemyPosX, enemyPosY)
 ghostY = Enemies("yellow", enemyPosX, enemyPosY)
+ghosts = pygame.sprite.Group(ghostG, ghostO, ghostP, ghostY)
 
 
 
@@ -143,9 +121,9 @@ ghostY = Enemies("yellow", enemyPosX, enemyPosY)
 #wallSquare = pygame.transform.scale(wallSquare, (40,40))
 
 wall = Walls(0, 0)
-wallSquare = wall.get_image()
-point = pygame.image.load('Images/point.png')
-point = pygame.transform.scale(point, (40, 40))
+point = Points()
+'''point = pygame.image.load('Images/point.png')
+point = pygame.transform.scale(point, (40, 40))'''
 # Set a rect?
 wallMap = [[1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
            [1, 2, 2, 2, 2, 2, 2, 2, 2, 1, 1, 2, 2, 2, 2, 2, 2, 2, 2, 1],
@@ -201,12 +179,13 @@ def render_level():
     screen.fill((0, 0, 0))
     xCounter = 0
     yCounter = 0
+    #wallRect = pygame.Rect(xCounter, yCounter, 40, 40)
     for i in range(len(wallMap)):
         for j in range(len(wallMap[i])):
             if wallMap[i][j] == 1:
-                screen.blit(wallSquare, (xCounter, yCounter))
+                wall.update(xCounter, yCounter)
             if wallMap[i][j] == 2:
-                screen.blit(point, (xCounter, yCounter))
+                point.update(xCounter, yCounter)
             xCounter = xCounter + 40
         yCounter = yCounter + 40
         xCounter = 0
@@ -244,36 +223,37 @@ while running:
     keys = pygame.key.get_pressed()
     
     if keys[pygame.K_LEFT]:
-        player.image_switch("left")
+        #player.image_switch("left")
         playerPosX -= steps
         if playerPosX <= 0:
             playerPosX = 760
-
-        '''if pygame.Rect.colliderect(player.get_rect(), wall.get_rect()):
-            playerPosX += steps'''
+        if pygame.Rect.colliderect(player.get_rect(), wall.get_rect()):
+            screen.fill(('50, 100, 3'))
 
     if keys[pygame.K_RIGHT]:
-        player.image_switch("right")
+        #player.image_switch("right")
         playerPosX += steps
         if playerPosX >= 760:
             playerPosX = 0
 
     if keys[pygame.K_UP]:
-        player.image_switch("up")
         playerPosY -= steps
         if playerPosY <= 0:
             playerPosY = 0
 
     if keys[pygame.K_DOWN]:
-        player.image_switch("down")
         playerPosY += steps
         if playerPosY >= 760:
             playerPosY = 760
 
-    
-
-    '''if pygame.Rect.colliderect(player.get_rect(), ghostG): #player.rect.colliderect(ghostG):
+    '''if pygame.sprite.spritecollide(player, ghosts, False, pygame.sprite.collide_mask):
         screen.fill((0, 0, 0))'''
+
+    if pygame.Rect.colliderect(player.get_rect(), ghostG.get_rect()) or pygame.Rect.colliderect(player.get_rect(), ghostO.get_rect()) or pygame.Rect.colliderect(player.get_rect(), ghostP.get_rect()) or pygame.Rect.colliderect(player.get_rect(), ghostY.get_rect()):
+        running = False
+
+    if pygame.Rect.colliderect(player.get_rect(), point.get_rect()):
+        point.image.fill((0, 0, 0))
 
     
     
